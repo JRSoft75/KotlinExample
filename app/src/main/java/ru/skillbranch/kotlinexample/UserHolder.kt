@@ -1,7 +1,6 @@
-package ru.skillbranch.kotlinexample.extentions
+package ru.skillbranch.kotlinexample
 
 import androidx.annotation.VisibleForTesting
-import ru.skillbranch.kotlinexample.User
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -25,7 +24,8 @@ object UserHolder {
             _login = login.trim()
         }else{
             //login is phone
-            _login = phoneNormalize(login)
+            _login =
+                phoneNormalize(login)
         }
         return map[_login]?.run {
             println("loginUser by: ${login}")
@@ -59,7 +59,9 @@ object UserHolder {
         val pattern: Pattern = Pattern.compile(regex)
         val matcher: Matcher = pattern.matcher(phone)
 
-        return !(!matcher.find() || phoneNormalize(phone).length != 12)
+        return !(!matcher.find() || phoneNormalize(
+            phone
+        ).length != 12)
 
             //throw IllegalArgumentException("Enter a valid phone number starting with a + and containing 11 digits")
 
