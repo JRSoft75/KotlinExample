@@ -140,6 +140,13 @@ class User private constructor(
         return hexString.padStart(32,'0') //заполняем 0 до длины 32
     }
 
+    fun changeAccessCode(rawPhone: String){
+        val code = generateAccessCode()
+        passwordHash = encrypt(code)
+        accessCode = code
+        sendAccessCodeToUser(rawPhone, code)
+    }
+
     companion object Factory{
         fun makeUser(
             fullName:String,

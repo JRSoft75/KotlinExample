@@ -11,18 +11,20 @@ object UserHolder {
         fullName: String,
         email: String,
         password: String
-    ):User{
+    ): User {
         return User.makeUser(fullName, email = email, password = password)
-            .also { user-> map[user.login] = user
-            println("User registered by login: ${user.login}")}
+            .also { user ->
+                map[user.login] = user
+                println("User registered by login: ${user.login}")
+            }
     }
 
-    fun loginUser(login: String, password: String) : String? {
+    fun loginUser(login: String, password: String): String? {
         //return map.toString()
         var _login = ""
-        if(checkPhone(login) == false){
+        if (checkPhone(login) == false) {
             _login = login.trim()
-        }else{
+        } else {
             //login is phone
             _login =
                 phoneNormalize(login)
@@ -30,31 +32,44 @@ object UserHolder {
         return map[_login]?.run {
             println("loginUser by: ${login}")
             //this.userInfo
-            if(checkPassword(password)) this.userInfo
+            if (checkPassword(password)) this.userInfo
             else null
         }
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-    fun clearHolder(){
+    fun clearHolder() {
         map.clear()
     }
 
     fun registerUserByPhone(
         fullName: String,
         phone: String
-    ):User{
+    ): User {
         return User.makeUser(fullName, phone = phone)
-            .also { user-> map[user.login] = user
+            .also { user ->
+                map[user.login] = user
                 println("User registered by phone: ${user.login} accessCode: ${user.accessCode}")
             }
     }
 
-    fun requestAccessCode(phone: String) : String{
-        return "000"
+    /*Реализуй метод requestAccessCode(login: String) : Unit, после выполнения данного метода
+    у пользователя с соответствующим логином должен быть сгенерирован новый код авторизации
+    и помещен в свойство accessCode, соответственно должен измениться и хеш пароля пользователя
+    (вызов метода loginUser должен отрабатывать корректно)*/
+    fun requestAccessCode(login: String): Unit {
+        var _login =  phoneNormalize(login)
+
+        map[_login]?.run {
+            changeAccessCode(login)
+            map[this.login] = this
+        }
+
     }
 
-    fun checkPhone(phone: String?):Boolean {
+
+
+    fun checkPhone(phone: String?): Boolean {
         val regex: String = "^\\+[^a-zA-Zа-яА-Я]+$"
         val pattern: Pattern = Pattern.compile(regex)
         val matcher: Matcher = pattern.matcher(phone)
@@ -63,9 +78,9 @@ object UserHolder {
             phone
         ).length != 12)
 
-            //throw IllegalArgumentException("Enter a valid phone number starting with a + and containing 11 digits")
+        //throw IllegalArgumentException("Enter a valid phone number starting with a + and containing 11 digits")
 
     }
 
-    private fun phoneNormalize(phone: String?) = phone?.replace("[^+\\d]".toRegex(),"").toString()
+    private fun phoneNormalize(phone: String?) = phone?.replace("[^+\\d]".toRegex(), "").toString()
 }
